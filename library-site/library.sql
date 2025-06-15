@@ -1,0 +1,35 @@
+
+CREATE DATABASE IF NOT EXISTS library CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE library;
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('user', 'admin') NOT NULL DEFAULT 'user',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS books (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    image VARCHAR(255),
+    available TINYINT(1) NOT NULL DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS borrow_records (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    book_id INT NOT NULL,
+    borrow_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    return_date DATETIME,
+    returned TINYINT(1) NOT NULL DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+);
+
+INSERT INTO users (username, password, role) VALUES
+('admin', '$2b$12$eLbKeePCkwj8I6pA71XDY.PbVGVVOVIxdcujgQX3vgSFPYt8EjDdm', 'admin'),
+('user', '$2b$12$H89kWUX.L9LmWY84BxcEUumIJz4dTdxULR03LcEpH1q5CtVx/M.Na', 'user');
